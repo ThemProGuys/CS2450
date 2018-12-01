@@ -27,7 +27,7 @@ import javafx.stage.Stage;
  * 
  * @author Varoozhan, Sarmen, Jesus, Chanwoo
  * Let's put a more detailed comment on what was done on the project here:
- * 
+ * Varoozhan & Sarmen: So far we have added the shape change color tool
  *
  */
 
@@ -37,6 +37,14 @@ public class HW4 extends Application
 	PhongMaterial materialCylinder;
 	PhongMaterial materialSphere;
 	PhongMaterial material;
+	Rotate rotateBoxX;
+	Rotate rotateBoxY;
+	Rotate rotateCylX;
+	Rotate rotateCylY;
+	Rotate rotateSphX;
+	Rotate rotateSphY;
+	Rotate rotateX;
+	Rotate rotateY;
 
     public static void main(String[] args){launch(args);}
 
@@ -132,9 +140,11 @@ public class HW4 extends Application
         bottomVB.setAlignment(Pos.CENTER);
         bottomVB.setPadding(new Insets(10));
         
+        /*
+         * Varoohzan and Sarmen code starts here:
+         */
         
-        
-        
+        // Change Color Part
         Label shapeColorLabel = new Label("Change shape color: ");
         ChoiceBox<String> shapeColorChoice = getColorChoiceBox();
         materialBox =new PhongMaterial();
@@ -153,10 +163,10 @@ public class HW4 extends Application
             	material.setDiffuseColor(Color.RED);
             }else if(shapeColorString == "GREEN")
             {
-            	material.setDiffuseColor(Color.GREEN);//                	material = material2;            
+            	material.setDiffuseColor(Color.GREEN);          
             }else if(shapeColorString == "BLUE")
             {
-            	material.setDiffuseColor(Color.BLUE);//                	material = material2;     
+            	material.setDiffuseColor(Color.BLUE);     
             }else if(shapeColorString == "AZURE")
             {
             	material.setDiffuseColor(Color.AZURE);
@@ -166,26 +176,84 @@ public class HW4 extends Application
             }
         });
         
+        
+        Label shapeRotateLabel = new Label("Rotate Shapes: ");
+        Label xLabel = new Label("X-Axis Rotater");
+        Label yLabel = new Label("Y-Axis Rotater");
+        
+        Slider xSlider = new Slider(0, 360, 0);
+        xSlider.setPrefWidth(300.0);
+        Slider ySlider = new Slider(0, 360, 0);
+        ySlider.setPrefWidth(300.0);
+        
+        xSlider.setShowTickMarks(true);
+        xSlider.setShowTickLabels(true);
+        ySlider.setShowTickMarks(true);
+        ySlider.setShowTickLabels(true);
+        
+        rotateBoxX = new Rotate(0, Rotate.X_AXIS);
+        rotateBoxY = new Rotate(0, Rotate.Y_AXIS);
+        rotateCylX = new Rotate(0, Rotate.X_AXIS);
+        rotateCylY = new Rotate(0, Rotate.Y_AXIS);
+        rotateSphX = new Rotate(0, Rotate.X_AXIS);
+        rotateSphY = new Rotate(0, Rotate.Y_AXIS);
+        
+        box.getTransforms().addAll(rotateBoxX, rotateBoxY);
+        cylinder.getTransforms().addAll(rotateCylX, rotateCylY);
+        sphere.getTransforms().addAll(rotateBoxX, rotateBoxY);
+
+//    	Rotate rotateBoxX;
+//    	Rotate rotateBoxY;
+//    	Rotate rotateCylX;
+//    	Rotate rotateCylY;
+//    	Rotate rotateSphX;
+//    	Rotate rotateSphY;
+//    	Rotate rotateX;
+//    	Rotate rotateY;
+    	rotateX =rotateBoxX;
+    	rotateY =rotateBoxY;
         box.setOnMouseClicked(event->{
         	material = materialBox;
         	box.setMaterial(material);
+        	rotateX =rotateBoxX;
+        	rotateY =rotateBoxY;
         }); 
         cylinder.setOnMouseClicked(event->{
         	material = materialCylinder;
         	cylinder.setMaterial(material); 
+        	rotateX =rotateCylX;
+        	rotateY =rotateCylY;
         }); 
         sphere.setOnMouseClicked(event->{
         	material = materialSphere;
         	sphere.setMaterial(material);
+        	rotateX =rotateSphX;
+        	rotateY =rotateSphY;
         }); 
-
-        HBox toolHbox1 = new HBox(shapeColorLabel,shapeColorChoice);
-        toolHbox1.setPadding(new Insets(20));
-        HBox toolHbox2 = new HBox();
-        HBox toolHbox3 = new HBox();
-        HBox toolHbox4 = new HBox();
         
-        VBox rightVB = new VBox(toolHbox1,toolHbox2,toolHbox3,toolHbox4); //this vbox is for the tools part
+        
+        xSlider.valueProperty().addListener((observable, oldvalue, newvalue) -> {
+            rotateX.setAngle(xSlider.getValue());
+        });
+        
+        ySlider.valueProperty().addListener((observable, oldvalue, newvalue) -> {
+            rotateY.setAngle(ySlider.getValue());
+        });
+
+        HBox toolHboxShapeColors = new HBox(10, shapeColorLabel,shapeColorChoice);
+        toolHboxShapeColors.setPadding(new Insets(40));
+        HBox toolHboxShapeRotate = new HBox(shapeRotateLabel);
+        toolHboxShapeRotate.setAlignment(Pos.CENTER);
+        HBox toolHboxShapeRotateSlider1 = new HBox(xLabel);
+        toolHboxShapeRotateSlider1.setPadding(new Insets(5));
+        HBox toolHboxShapeRotateSlider2 = new HBox(xSlider);
+        toolHboxShapeRotateSlider2.setPadding(new Insets(10));
+        HBox toolHboxShapeRotateSlider3 = new HBox(yLabel);
+        toolHboxShapeRotateSlider3.setPadding(new Insets(5));
+        HBox toolHboxShapeRotateSlider4 = new HBox(ySlider);
+        toolHboxShapeRotateSlider4.setPadding(new Insets(10));
+        VBox rightVB = new VBox(toolHboxShapeColors,toolHboxShapeRotate,toolHboxShapeRotateSlider1,toolHboxShapeRotateSlider2,
+        		toolHboxShapeRotateSlider3,toolHboxShapeRotateSlider4); //this vbox is for the tools part
         
         borderPane.setTop(menuB);
         borderPane.setCenter(shapesSubScene);
