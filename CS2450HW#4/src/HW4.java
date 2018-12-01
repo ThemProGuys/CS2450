@@ -1,6 +1,7 @@
 package edu.cpp.CS2450;
 
 import javafx.application.Application;
+import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -13,6 +14,7 @@ import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
@@ -21,6 +23,7 @@ import javafx.scene.shape.Box;
 import javafx.scene.shape.Cylinder;
 import javafx.scene.shape.Sphere;
 import javafx.scene.transform.Rotate;
+import javafx.scene.transform.Scale;
 import javafx.scene.transform.Translate;
 import javafx.stage.Stage;
 /**
@@ -45,7 +48,11 @@ public class HW4 extends Application
 	Rotate rotateSphY;
 	Rotate rotateX;
 	Rotate rotateY;
-
+	Scale boxScale;
+	Scale cylScale;
+	Scale sphScale;
+	Scale scale;
+	
     public static void main(String[] args){launch(args);}
 
     public void start(Stage myStage)
@@ -140,11 +147,11 @@ public class HW4 extends Application
         bottomVB.setAlignment(Pos.CENTER);
         bottomVB.setPadding(new Insets(10));
         
-        /*
-         * Varoohzan and Sarmen code starts here:
-         */
+/*
+ * Varoohzan and Sarmen code starts here:
+ */
         
-        // Change Color Part
+// TOOLS: Change Color Part
         Label shapeColorLabel = new Label("Change shape color: ");
         ChoiceBox<String> shapeColorChoice = getColorChoiceBox();
         materialBox =new PhongMaterial();
@@ -176,7 +183,55 @@ public class HW4 extends Application
             }
         });
         
-        
+//TOOLS: Scale part
+        GridPane gridPane = new GridPane();	
+        gridPane.setPadding(new Insets(10));
+		Label sphereScaleLabel=new Label("Please Enter Scale Size(default is 1): ");
+		Label scaleWidth=new Label("Width(Radius): ");
+		Label scaleHeight=new Label("Height: ");
+		Label scaleDepth=new Label("Depth: ");
+		TextField widthTextField = new TextField("1");
+		TextField heightTextField = new TextField("1");
+		TextField depthTextField = new TextField("1");
+		
+		Button scaleButton = new Button("Apply");
+		gridPane.add(sphereScaleLabel,0,0);
+		gridPane.add(scaleWidth,0,1);
+		gridPane.add(scaleHeight,0,2);
+		gridPane.add(scaleDepth,0,3);
+		gridPane.add(widthTextField,1,1);
+		gridPane.add(heightTextField,1,2);
+		gridPane.add(depthTextField,1,3);
+		
+		boxScale = new Scale();
+		cylScale = new Scale();
+		sphScale = new Scale();
+		scale = new Scale();
+		scale = boxScale;
+		
+		widthTextField.textProperty().addListener((observable, oldvalue, newvalue) -> {
+			double widthValue = Double.parseDouble(widthTextField.getText());
+			scale.setX(widthValue);
+        });
+		heightTextField.textProperty().addListener((observable, oldvalue, newvalue) -> {
+			double heightValue = Double.parseDouble(heightTextField.getText());
+			scale.setY(heightValue);
+
+        });
+		depthTextField.textProperty().addListener((observable, oldvalue, newvalue) -> {
+			double depthValue = Double.parseDouble(depthTextField.getText());
+			scale.setZ(depthValue);
+        });
+		
+//		scaleButton.setOnAction(event->{
+//			double widthValue = Double.parseDouble(widthTextField.getText());
+//			double heightValue = Double.parseDouble(heightTextField.getText());
+//			double depthValue = Double.parseDouble(depthTextField.getText());
+//			boxScale.setX(widthValue);
+//			boxScale.setY(heightValue);
+//			boxScale.setZ(depthValue);
+//		});
+// TOOLS: Rotate part
         Label shapeRotateLabel = new Label("Rotate Shapes: ");
         Label xLabel = new Label("X-Axis Rotater");
         Label yLabel = new Label("Y-Axis Rotater");
@@ -198,40 +253,6 @@ public class HW4 extends Application
         rotateSphX = new Rotate(0, Rotate.X_AXIS);
         rotateSphY = new Rotate(0, Rotate.Y_AXIS);
         
-        box.getTransforms().addAll(rotateBoxX, rotateBoxY);
-        cylinder.getTransforms().addAll(rotateCylX, rotateCylY);
-        sphere.getTransforms().addAll(rotateBoxX, rotateBoxY);
-
-//    	Rotate rotateBoxX;
-//    	Rotate rotateBoxY;
-//    	Rotate rotateCylX;
-//    	Rotate rotateCylY;
-//    	Rotate rotateSphX;
-//    	Rotate rotateSphY;
-//    	Rotate rotateX;
-//    	Rotate rotateY;
-    	rotateX =rotateBoxX;
-    	rotateY =rotateBoxY;
-        box.setOnMouseClicked(event->{
-        	material = materialBox;
-        	box.setMaterial(material);
-        	rotateX =rotateBoxX;
-        	rotateY =rotateBoxY;
-        }); 
-        cylinder.setOnMouseClicked(event->{
-        	material = materialCylinder;
-        	cylinder.setMaterial(material); 
-        	rotateX =rotateCylX;
-        	rotateY =rotateCylY;
-        }); 
-        sphere.setOnMouseClicked(event->{
-        	material = materialSphere;
-        	sphere.setMaterial(material);
-        	rotateX =rotateSphX;
-        	rotateY =rotateSphY;
-        }); 
-        
-        
         xSlider.valueProperty().addListener((observable, oldvalue, newvalue) -> {
             rotateX.setAngle(xSlider.getValue());
         });
@@ -240,8 +261,49 @@ public class HW4 extends Application
             rotateY.setAngle(ySlider.getValue());
         });
 
+    	rotateX =rotateBoxX;
+    	rotateY =rotateBoxY;
+        
+// common Code for Scale Transform and Rotate
+        box.getTransforms().addAll(rotateBoxX, rotateBoxY);
+        cylinder.getTransforms().addAll(rotateCylX, rotateCylY);
+        sphere.getTransforms().addAll(rotateBoxX, rotateBoxY);
+        
+        
+        
+// Mouse Click Events for each object.
+        box.setOnMouseClicked(event->{
+        	material = materialBox;
+        	box.setMaterial(material);
+        	rotateX =rotateBoxX;
+        	rotateY =rotateBoxY;
+        	scale = boxScale;
+	        box.getTransforms().addAll(scale);
+
+        }); 
+        cylinder.setOnMouseClicked(event->{
+        	material = materialCylinder;
+        	cylinder.setMaterial(material); 
+        	rotateX =rotateCylX;
+        	rotateY =rotateCylY;
+        	scale = cylScale;
+	        cylinder.getTransforms().addAll(scale);
+
+        }); 
+        sphere.setOnMouseClicked(event->{
+        	material = materialSphere;
+        	sphere.setMaterial(material);
+        	rotateX =rotateSphX;
+        	rotateY =rotateSphY;
+        	scale = sphScale;
+	        sphere.getTransforms().addAll(scale);
+        }); 
+        
+        
+
+
         HBox toolHboxShapeColors = new HBox(10, shapeColorLabel,shapeColorChoice);
-        toolHboxShapeColors.setPadding(new Insets(40));
+        toolHboxShapeColors.setPadding(new Insets(10));
         HBox toolHboxShapeRotate = new HBox(shapeRotateLabel);
         toolHboxShapeRotate.setAlignment(Pos.CENTER);
         HBox toolHboxShapeRotateSlider1 = new HBox(xLabel);
@@ -253,7 +315,7 @@ public class HW4 extends Application
         HBox toolHboxShapeRotateSlider4 = new HBox(ySlider);
         toolHboxShapeRotateSlider4.setPadding(new Insets(10));
         VBox rightVB = new VBox(toolHboxShapeColors,toolHboxShapeRotate,toolHboxShapeRotateSlider1,toolHboxShapeRotateSlider2,
-        		toolHboxShapeRotateSlider3,toolHboxShapeRotateSlider4); //this vbox is for the tools part
+        		toolHboxShapeRotateSlider3,toolHboxShapeRotateSlider4,gridPane); //this vbox is for the tools part
         
         borderPane.setTop(menuB);
         borderPane.setCenter(shapesSubScene);
@@ -265,6 +327,7 @@ public class HW4 extends Application
         myStage.setScene(scene);
         myStage.show();
     }
+    
 
     ChoiceBox<String> getColorChoiceBox()
     {
