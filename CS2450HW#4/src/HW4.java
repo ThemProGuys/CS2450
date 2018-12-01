@@ -52,6 +52,10 @@ public class HW4 extends Application
 	Scale cylScale;
 	Scale sphScale;
 	Scale scale;
+	Translate boxTranslate;
+	Translate cylTranslate;
+	Translate sphTranslate;
+	Translate translate;
 	
     public static void main(String[] args){launch(args);}
 
@@ -184,24 +188,23 @@ public class HW4 extends Application
         });
         
 //TOOLS: Scale part
-        GridPane gridPane = new GridPane();	
-        gridPane.setPadding(new Insets(10));
-		Label sphereScaleLabel=new Label("Please Enter Scale Size(default is 1): ");
-		Label scaleWidth=new Label("Width(Radius): ");
+        GridPane gridPaneScale = new GridPane();	
+        gridPaneScale.setPadding(new Insets(10));
+		Label scaleLabel=new Label("Please Enter Scale Size(default is 1): ");
+		Label scaleWidth=new Label("Width: ");
 		Label scaleHeight=new Label("Height: ");
 		Label scaleDepth=new Label("Depth: ");
 		TextField widthTextField = new TextField("1");
 		TextField heightTextField = new TextField("1");
 		TextField depthTextField = new TextField("1");
 		
-		Button scaleButton = new Button("Apply");
-		gridPane.add(sphereScaleLabel,0,0);
-		gridPane.add(scaleWidth,0,1);
-		gridPane.add(scaleHeight,0,2);
-		gridPane.add(scaleDepth,0,3);
-		gridPane.add(widthTextField,1,1);
-		gridPane.add(heightTextField,1,2);
-		gridPane.add(depthTextField,1,3);
+		gridPaneScale.add(scaleLabel,0,0);
+		gridPaneScale.add(scaleWidth,0,1);
+		gridPaneScale.add(scaleHeight,0,2);
+		gridPaneScale.add(scaleDepth,0,3);
+		gridPaneScale.add(widthTextField,1,1);
+		gridPaneScale.add(heightTextField,1,2);
+		gridPaneScale.add(depthTextField,1,3);
 		
 		boxScale = new Scale();
 		cylScale = new Scale();
@@ -222,15 +225,7 @@ public class HW4 extends Application
 			double depthValue = Double.parseDouble(depthTextField.getText());
 			scale.setZ(depthValue);
         });
-		
-//		scaleButton.setOnAction(event->{
-//			double widthValue = Double.parseDouble(widthTextField.getText());
-//			double heightValue = Double.parseDouble(heightTextField.getText());
-//			double depthValue = Double.parseDouble(depthTextField.getText());
-//			boxScale.setX(widthValue);
-//			boxScale.setY(heightValue);
-//			boxScale.setZ(depthValue);
-//		});
+
 // TOOLS: Rotate part
         Label shapeRotateLabel = new Label("Rotate Shapes: ");
         Label xLabel = new Label("X-Axis Rotater");
@@ -263,12 +258,50 @@ public class HW4 extends Application
 
     	rotateX =rotateBoxX;
     	rotateY =rotateBoxY;
+    	
+// TOOLS: Translate part
+        GridPane gridPaneTranslate = new GridPane();	
+        gridPaneScale.setPadding(new Insets(10));
+		Label translateLabel=new Label("Please Enter x,y,z coordinates: ");
+		Label translateX=new Label("X: ");
+		Label translateY=new Label("Y: ");
+		Label translateZ=new Label("Z: ");
+		TextField xTextField = new TextField("0");
+		TextField yTextField = new TextField("0");
+		TextField zTextField = new TextField("0");
+		
+		gridPaneTranslate.add(translateLabel,0,0);
+		gridPaneTranslate.add(translateX,0,1);
+		gridPaneTranslate.add(translateY,0,2);
+		gridPaneTranslate.add(translateZ,0,3);
+		gridPaneTranslate.add(xTextField,1,1);
+		gridPaneTranslate.add(yTextField,1,2);
+		gridPaneTranslate.add(zTextField,1,3);
+		
+		boxTranslate = new Translate();
+		cylTranslate = new Translate();
+		sphTranslate = new Translate();
+		translate = new Translate();
+		translate = boxTranslate;
+		
+		xTextField.textProperty().addListener((observable, oldvalue, newvalue) -> {
+			double xValue = Double.parseDouble(xTextField.getText());
+			translate.setX(xValue);
+        });
+		yTextField.textProperty().addListener((observable, oldvalue, newvalue) -> {
+			double yValue = Double.parseDouble(yTextField.getText());
+			translate.setY(yValue);
+
+        });
+		zTextField.textProperty().addListener((observable, oldvalue, newvalue) -> {
+			double zValue = Double.parseDouble(zTextField.getText());
+			translate.setZ(zValue);
+        });
         
 // common Code for Scale Transform and Rotate
         box.getTransforms().addAll(rotateBoxX, rotateBoxY);
         cylinder.getTransforms().addAll(rotateCylX, rotateCylY);
         sphere.getTransforms().addAll(rotateBoxX, rotateBoxY);
-        
         
         
 // Mouse Click Events for each object.
@@ -278,7 +311,8 @@ public class HW4 extends Application
         	rotateX =rotateBoxX;
         	rotateY =rotateBoxY;
         	scale = boxScale;
-	        box.getTransforms().addAll(scale);
+        	translate = boxTranslate;
+	        box.getTransforms().addAll(scale,translate);
 
         }); 
         cylinder.setOnMouseClicked(event->{
@@ -287,7 +321,8 @@ public class HW4 extends Application
         	rotateX =rotateCylX;
         	rotateY =rotateCylY;
         	scale = cylScale;
-	        cylinder.getTransforms().addAll(scale);
+        	translate = cylTranslate;
+	        cylinder.getTransforms().addAll(scale,translate);
 
         }); 
         sphere.setOnMouseClicked(event->{
@@ -296,7 +331,8 @@ public class HW4 extends Application
         	rotateX =rotateSphX;
         	rotateY =rotateSphY;
         	scale = sphScale;
-	        sphere.getTransforms().addAll(scale);
+        	translate = sphTranslate;
+	        sphere.getTransforms().addAll(scale,translate);
         }); 
         
         
@@ -315,7 +351,7 @@ public class HW4 extends Application
         HBox toolHboxShapeRotateSlider4 = new HBox(ySlider);
         toolHboxShapeRotateSlider4.setPadding(new Insets(10));
         VBox rightVB = new VBox(toolHboxShapeColors,toolHboxShapeRotate,toolHboxShapeRotateSlider1,toolHboxShapeRotateSlider2,
-        		toolHboxShapeRotateSlider3,toolHboxShapeRotateSlider4,gridPane); //this vbox is for the tools part
+        		toolHboxShapeRotateSlider3,toolHboxShapeRotateSlider4,gridPaneScale,gridPaneTranslate); //this vbox is for the tools part
         
         borderPane.setTop(menuB);
         borderPane.setCenter(shapesSubScene);
