@@ -56,10 +56,17 @@ public class HW4 extends Application
 	Translate cylTranslate;
 	Translate sphTranslate;
 	Translate translate;
+	ChoiceBox<String> shapeChoice;
+	Button addShapeAddButton;
+	TextField radiusTextField;
+	TextField widthTextField;
+	TextField heightTextField;
+	TextField lengthTextField;
+	
 	
     public static void main(String[] args){launch(args);}
 
-    public void start(Stage myStage)
+    public void start(Stage primaryStage)
     {
         Sphere sphere = new Sphere(3); // Radius
         // temporary given values to print shapes and make the tool box function
@@ -90,35 +97,19 @@ public class HW4 extends Application
         shapesSubScene.setCamera(pCamera);
         shapesSubScene.setFill(Color.WHITE);
 
-        Label shapeL = new Label("Select Shape");
-        Label xLocation = new Label("x: ");
-        Label yLocation = new Label("y: ");
-        Label radius = new Label("radius: ");
-        Label width = new Label("width: ");
-        Label height = new Label("height: ");
-        Label length = new Label("length: ");
 
-        VBox circleVB = new VBox(10,xLocation,yLocation,radius);
-        VBox boxVB = new VBox(10,xLocation,yLocation,width,height,length);
-        VBox cylinderVB = new VBox(10,xLocation,yLocation,radius,height);
 
-        ChoiceBox<String> shapeChoice = getShapeChoiceBox();
+//        VBox circleVB = new VBox(10,xLocation,yLocation,radius);
+//        VBox boxVB = new VBox(10,xLocation,yLocation,width,height,length);
+//        VBox cylinderVB = new VBox(10,xLocation,yLocation,radius,height);
 
-        Button b = new Button("Add Shape");
+
+        Button addShapeButton = new Button("Add Shape");
         
-        b.setOnAction(event -> {
-            //bP.setBottom();
-            String shapeS = shapeChoice.getSelectionModel().getSelectedItem();
-            if(shapeS == "SPHERE")
-            {
+        addShapeButton.setOnAction(event -> {
+        	addShape(primaryStage);
+//            //bP.setBottom();
 
-            }else if(shapeS == "BOX")
-            {
-
-            }else if(shapeS == "CYLINDER")
-            {
-
-            }
         });
 
         Label backgroundLabel = new Label("Change Background Color: ");
@@ -147,7 +138,7 @@ public class HW4 extends Application
         
         HBox bottomHB = new HBox(10,backgroundLabel,backgroundColorChoice,changeColor);
         bottomHB.setAlignment(Pos.CENTER);
-        VBox bottomVB = new VBox(10,b,bottomHB);
+        VBox bottomVB = new VBox(10,addShapeButton,bottomHB);
         bottomVB.setAlignment(Pos.CENTER);
         bottomVB.setPadding(new Insets(10));
         
@@ -335,8 +326,6 @@ public class HW4 extends Application
 	        sphere.getTransforms().addAll(scale,translate);
         }); 
         
-        
-
 
         HBox toolHboxShapeColors = new HBox(10, shapeColorLabel,shapeColorChoice);
         toolHboxShapeColors.setPadding(new Insets(10));
@@ -360,12 +349,109 @@ public class HW4 extends Application
         borderPane.setRight(rightVB);
         
         Scene scene = new Scene(borderPane);
-        myStage.setScene(scene);
-        myStage.show();
+        primaryStage.setScene(scene);
+        primaryStage.setTitle("Shape Application");
+        primaryStage.show();
     }
     
 
-    ChoiceBox<String> getColorChoiceBox()
+    private void addShape(Stage addShapeStage) {
+        Label shapeLabel = new Label("Select Shape: ");
+        Label xLocation = new Label("x: ");
+        Label yLocation = new Label("y: ");
+        Label radius = new Label("radius: ");
+        Label width = new Label("width: ");
+        Label height = new Label("height: ");
+        Label length = new Label("length: ");
+		addShapeAddButton = new Button("Add");
+		Button addShapeBackButton = new Button("Back");
+		TextField xLocationTextField = new TextField("X Location");
+		TextField yLocationTextField = new TextField("Y Location");
+		radiusTextField = new TextField("width");
+		widthTextField = new TextField("width");
+		heightTextField = new TextField("height");
+		lengthTextField = new TextField("length");
+        
+        shapeChoice = getShapeChoiceBox();
+		
+		addShapeAddButton.setOnAction(event->{
+			String shapeS = shapeChoice.getSelectionModel().getSelectedItem();
+			if(shapeS == "SPHERE")
+			{
+			
+			}else if(shapeS == "BOX")
+			{
+			
+			}else if(shapeS == "CYLINDER")
+			{
+			
+			}
+			
+		});
+		
+
+		
+        GridPane addShapeGridPane = new GridPane();	
+        addShapeGridPane.setPadding(new Insets(10));
+        
+        addShapeGridPane.add(shapeLabel,0,0);
+        addShapeGridPane.add(shapeChoice,1,0);
+        addShapeGridPane.add(xLocation,0,1);
+        addShapeGridPane.add(yLocation,0,2);
+        addShapeGridPane.add(radius,0,3);
+        addShapeGridPane.add(width,0,4);
+        addShapeGridPane.add(height,0,5);
+        addShapeGridPane.add(length,0,6);
+        addShapeGridPane.add(addShapeAddButton,0,7);
+        addShapeGridPane.add(xLocationTextField,1,1);
+        addShapeGridPane.add(yLocationTextField,1,2);
+        addShapeGridPane.add(radiusTextField,1,3);
+        addShapeGridPane.add(widthTextField,1,4);
+        addShapeGridPane.add(heightTextField,1,5);
+        addShapeGridPane.add(lengthTextField,1,6);
+        addShapeGridPane.add(addShapeBackButton,1,7);
+        
+        addShapeGridPane.setVgap(10);
+        addShapeGridPane.setHgap(10);
+        addShapeGridPane.setAlignment(Pos.CENTER);
+        addShapeAddButton.setDisable(true);
+        ChoiceBoxListener chListener =new  ChoiceBoxListener();
+        shapeChoice.valueProperty().addListener(chListener);
+        
+        addShapeBackButton.setOnAction(event->{
+        	start(addShapeStage);
+        });
+        
+        Scene scene = new Scene(addShapeGridPane,500,500);
+        addShapeStage.setTitle("Add Shape");
+        addShapeStage.setScene(scene);
+        addShapeStage.show();
+
+	}
+
+    private class ChoiceBoxListener implements ChangeListener<String>
+	{
+		@Override
+		public void changed(ObservableValue<? extends String> source, String oldValue, String
+		newValue)
+		{
+			String shapeValue = shapeChoice.getValue();
+			addShapeAddButton.setDisable(shapeValue.trim().equals(""));
+			if(shapeValue.equals("SPHERE")) {
+				lengthTextField.setDisable(true);
+				radiusTextField.setDisable(false);
+				widthTextField.setDisable(true);
+				heightTextField.setDisable(true);
+			}else {
+				lengthTextField.setDisable(false);
+				radiusTextField.setDisable(true);
+				widthTextField.setDisable(false);
+				heightTextField.setDisable(false);
+			}
+		}
+	};
+    
+	ChoiceBox<String> getColorChoiceBox()
     {
         ChoiceBox<String> colorChoice = new ChoiceBox<>();
         colorChoice.getItems().addAll("RED","GREEN","BLUE","AZURE","GRAY");
