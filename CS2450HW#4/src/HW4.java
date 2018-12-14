@@ -23,7 +23,6 @@ import javafx.scene.paint.Color;
 import javafx.scene.paint.PhongMaterial;
 import javafx.scene.shape.Box;
 import javafx.scene.shape.Cylinder;
-import javafx.scene.shape.Shape;
 import javafx.scene.shape.Shape3D;
 import javafx.scene.shape.Sphere;
 import javafx.scene.transform.Rotate;
@@ -34,9 +33,10 @@ import javafx.stage.FileChooser.ExtensionFilter;
 import javafx.stage.Stage;
 /**
  * 
- * @author Varoozhan, Sarmen, Jesus, Chanwoo
+ * @author Varoozhan Hartoonian, Sarmen Andreasian, Jesus Leon, Chanwoo Kim
  * Let's put a more detailed comment on what was done on the project here:
  * Varoozhan & Sarmen: So far we have added the shape change color tool
+ * Jesus: Added save and load functionalities
  *
  */
 
@@ -74,6 +74,7 @@ public class HW4 extends Application
         Scene scene;
         Shape3D clickedShape;
         SubScene shapesSubScene;
+        Color subColor = Color.WHITE;
 	
 	
     public static void main(String[] args){
@@ -82,11 +83,6 @@ public class HW4 extends Application
 
     public void start(Stage primaryStage)
     {
-        Sphere sphere = new Sphere(3); // Radius
-        // temporary given values to print shapes and make the tool box function
-        Box box = new Box(5,5,5); // w h d
-        Cylinder cylinder = new Cylinder(2,10); // r h
-
         BorderPane borderPane = new BorderPane();
 
         MenuBar menuB = new MenuBar();
@@ -111,10 +107,6 @@ public class HW4 extends Application
                 System.out.println("Error on Load");
             }
     });
-        
-        
-		box.getTransforms().add( new Translate(-8, 0, 0));
-		cylinder.getTransforms().add( new Translate(8, 0, 0));
 
         VBox rootNode = new VBox(10);
         rootNode.setAlignment(Pos.CENTER);
@@ -125,13 +117,8 @@ public class HW4 extends Application
         PerspectiveCamera pCamera = new PerspectiveCamera(true);
         pCamera.getTransforms().addAll(hRotate,new Translate(0,0,-60));
         shapesSubScene.setCamera(pCamera);
-        shapesSubScene.setFill(Color.WHITE);
+        shapesSubScene.setFill(subColor);
 
-
-
-//        VBox circleVB = new VBox(10,xLocation,yLocation,radius);
-//        VBox boxVB = new VBox(10,xLocation,yLocation,width,height,length);
-//        VBox cylinderVB = new VBox(10,xLocation,yLocation,radius,height);
 
 
         Button addShapeButton = new Button("Add Shape");
@@ -139,9 +126,6 @@ public class HW4 extends Application
         addShapeButton.setOnAction(event -> {
             overallGroup.getChildren().setAll(shapesGroup.getChildren());
             addShape(primaryStage);
-                //shapesGroup.getChildren().addAll(createBox("3", "3", "3", "fffff", "1", "1", "1", "0", "0", "-8", "0", "0"));
-//            //bP.setBottom();
-
         });
 
         Label backgroundLabel = new Label("Change Background Color: ");
@@ -153,18 +137,23 @@ public class HW4 extends Application
             if(backgroundColorString == "RED")
             {
                 shapesSubScene.setFill(Color.RED);
+                subColor = Color.RED;
             }else if(backgroundColorString == "GREEN")
             {
                 shapesSubScene.setFill(Color.GREEN);
+                subColor = Color.GREEN;
             }else if(backgroundColorString == "BLUE")
             {
                 shapesSubScene.setFill(Color.BLUE);
+                subColor = Color.BLUE;
             }else if(backgroundColorString == "AZURE")
             {
                 shapesSubScene.setFill(Color.AZURE);
+                subColor = Color.AZURE;
             }else if(backgroundColorString == "GRAY")
             {
                 shapesSubScene.setFill(Color.GRAY);
+                subColor = Color.GRAY;
             }
         });
         
@@ -328,42 +317,9 @@ public class HW4 extends Application
 			translate.setZ(zValue);
         });
         
-// common Code for Scale Transform and Rotate
-        box.getTransforms().addAll(rotateBoxX, rotateBoxY);
-        cylinder.getTransforms().addAll(rotateCylX, rotateCylY);
-        sphere.getTransforms().addAll(rotateBoxX, rotateBoxY);
+
         
         
-// Mouse Click Events for each object.
-        /*box.setOnMouseClicked(event->{
-        	material = materialBox;
-        	box.setMaterial(material);
-        	rotateX =rotateBoxX;
-        	rotateY =rotateBoxY;
-        	scale = boxScale;
-        	translate = boxTranslate;
-	        box.getTransforms().addAll(scale,translate);
-
-        });
-        cylinder.setOnMouseClicked(event->{
-        	material = materialCylinder;
-        	cylinder.setMaterial(material); 
-        	rotateX =rotateCylX;
-        	rotateY =rotateCylY;
-        	scale = cylScale;
-        	translate = cylTranslate;
-	        cylinder.getTransforms().addAll(scale,translate);
-
-        }); 
-        sphere.setOnMouseClicked(event->{
-        	material = materialSphere;
-        	sphere.setMaterial(material);
-        	rotateX =rotateSphX;
-        	rotateY =rotateSphY;
-        	scale = sphScale;
-        	translate = sphTranslate;
-	        sphere.getTransforms().addAll(scale,translate);
-        }); */
         
 
         HBox toolHboxShapeColors = new HBox(10, shapeColorLabel,shapeColorChoice);
@@ -432,6 +388,7 @@ public class HW4 extends Application
                                     radiusTextField.getText(), "default", "1", "1", "1", "0", "0",
                                     xLocationTextField.getText(), yLocationTextField.getText(), "0"));
 			}
+                        start(addShapeStage);
 			
 		});
 		
@@ -647,15 +604,6 @@ public class HW4 extends Application
                 new Rotate(Double.parseDouble(rotateX), Rotate.X_AXIS),
                 new Rotate(Double.parseDouble(rotateY), Rotate.Y_AXIS),
                 new Translate(Double.parseDouble(translateX), Double.parseDouble(translateY), Double.parseDouble(translateZ)));
-        //box.setScaleX(1);
-        //box.setScaleY(1);
-        //box.setScaleZ(1);
-        //box.getTransforms().add(new Rotate(Double.parseDouble(rotateX), Rotate.X_AXIS));
-        //box.getTransforms().add(new Rotate(Double.parseDouble(rotateY), Rotate.Y_AXIS));
-        //box.getTransforms().add(new Translate(Double.parseDouble(translateX), Double.parseDouble(translateY), Double.parseDouble(translateZ)));
-        //box.setTranslateX(Double.parseDouble(translateX));
-        //box.setTranslateY(Double.parseDouble(translateY));
-        //box.setTranslateZ(Double.parseDouble(translateZ));
         
         box.setOnMouseClicked(event->{
                 clickedShape = box;
@@ -664,7 +612,6 @@ public class HW4 extends Application
         	this.rotateY = (Rotate)box.getTransforms().get(2);
         	scale = (Scale)box.getTransforms().get(0);
         	translate = (Translate)box.getTransforms().get(3);
-	        //box.getTransforms().addAll(scale,translate);
 
         }); 
         return box;
@@ -689,16 +636,6 @@ public class HW4 extends Application
 	        //box.getTransforms().addAll(scale,translate);
 
         });
-        
-        /*sphere.setScaleX(Double.parseDouble(scaleX));
-        sphere.setScaleY(Double.parseDouble(scaleY));
-        sphere.setScaleZ(Double.parseDouble(scaleZ));
-        sphere.getTransforms().add(new Rotate(Double.parseDouble(rotateX), Rotate.X_AXIS));
-        sphere.getTransforms().add(new Rotate(Double.parseDouble(rotateY), Rotate.Y_AXIS));
-        sphere.setTranslateX(Double.parseDouble(translateX));
-        sphere.setTranslateY(Double.parseDouble(translateY));
-        sphere.setTranslateZ(Double.parseDouble(translateZ));*/
-        //sphere.getTransforms().addAll(new Translate(Double.parseDouble(translateX), Double.parseDouble(translateY), Double.parseDouble(translateZ)));
         return sphere;
     }
     
@@ -722,14 +659,6 @@ public class HW4 extends Application
 	        //box.getTransforms().addAll(scale,translate);
 
         });
-        /*cyl.setScaleX(Double.parseDouble(scaleX));
-        cyl.setScaleY(Double.parseDouble(scaleY));
-        cyl.setScaleZ(Double.parseDouble(scaleZ));
-        cyl.getTransforms().add(new Rotate(Double.parseDouble(rotateX), Rotate.X_AXIS));
-        cyl.getTransforms().add(new Rotate(Double.parseDouble(rotateY), Rotate.Y_AXIS));
-        cyl.setTranslateX(Double.parseDouble(translateX));
-        cyl.setTranslateY(Double.parseDouble(translateY));
-        cyl.setTranslateZ(Double.parseDouble(translateZ));*/
         return cyl;
     }
     
